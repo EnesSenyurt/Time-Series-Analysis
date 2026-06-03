@@ -25,7 +25,8 @@ automaton:
   smoothing_alpha: 1.0
   score: neg_log_path     # anomali skoru = -log(path_prob)
   path_horizon: 2         # confidence icin yerel path uzunlugu
-  threshold: auto_f1      # validasyonda F1 maksimize eden esik
+  threshold: auto_f1      # validasyonda F1 maksimize eden esik (runner)
+  explain_threshold: 0.5  # bagimsiz aciklama icin varsayilan esik (runner override eder)
 
 dl:
   epochs: 50
