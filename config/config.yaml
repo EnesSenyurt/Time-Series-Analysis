@@ -1,0 +1,83 @@
+# YazLab2 - merkezi konfigurasyon (tek dogruluk kaynagi).
+# Tum parametreler buradan gelir; hard-coded deger kullanilmaz.
+
+seed_list: [42, 123, 2026, 7, 999]
+
+fixed_params:        # zorunlu karsilastirma noktasi
+  window_size: 4
+  alphabet_size: 3
+
+param_grid:          # parametre varyasyonu (otomata)
+  window_size: [3, 4, 5, 6]
+  alphabet_size: [3, 4, 5, 6]
+
+scenarios: [original, noise, unseen]
+
+noise:
+  type: gaussian
+  sigma_ratio: 0.2   # her ozelligin train std'sinin orani
+  apply_to: test     # train temiz, test gurultulu (robustness)
+
+automaton:
+  paa_segment_size: 1     # PAA segment uzunlugu (1=ornek basina; >1 sikistirir)
+  build_on: normal_only   # train'in anomaly==0 kismi
+  smoothing: laplace
+  smoothing_alpha: 1.0
+  score: neg_log_path     # anomali skoru = -log(path_prob)
+  path_horizon: 2         # confidence icin yerel path uzunlugu
+  threshold: auto_f1      # validasyonda F1 maksimize eden esik
+
+dl:
+  epochs: 50
+  batch_size: 32
+  early_stopping:
+    monitor: val_loss
+    patience: 5
+    restore_best_weights: true
+  sequence_length: 30     # DL lookback (SAX window'dan bagimsiz)
+  class_weight: balanced
+  models: [lstm, cnn1d]
+  lstm:
+    units: [64, 32]
+    dropout: 0.2
+  cnn1d:
+    filters: [64, 32]
+    kernel_size: 3
+    dropout: 0.2
+
+datasets:
+  skab:
+    dir: SKAB
+    use_folders: [valve1, valve2]
+    sep: ";"
+    target: anomaly
+    drop_cols: [datetime, changepoint, source_group, source_file]
+    cv:
+      strategy: stratified_group_kfold
+      n_splits: 5
+      group_col: source_file
+  batadal:
+    file: BATADAL/BATADAL_dataset04.csv
+    sep: ","
+    skipinitialspace: true
+    target: ATT_FLAG
+    time_col: DATETIME
+    unlabeled_value: -999
+    unlabeled_policy: as_normal   # -999 -> 0 (rapora not dusulecek)
+    split:
+      train: 0.6
+      val: 0.2
+      test: 0.2
+
+preprocess:
+  scaler: standard         # StandardScaler (TRAIN'de fit)
+  impute: median           # eksik veri (TRAIN istatistigi)
+  pca:
+    enabled: true
+    n_components: 1         # PC1 (otomata icin)
+
+paths:
+  results: results
+  figures: results/figures
+  metrics: results/metrics
+  logs: results/logs

@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Sanal ortam
+.venv/
+venv/
+env/
+
+# Model artefaktlari (buyuk)
+*.h5
+*.keras
+*.pt
+*.joblib
+
+# Deney ciktilari (buyuk gorseller; kucuk metrik JSON/CSV commit edilebilir)
+results/figures/*.png
+results/figures/*.svg
+results/logs/*.log
+
+# Isletim sistemi / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
