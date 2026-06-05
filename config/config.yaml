@@ -1,7 +1,7 @@
 # YazLab2 - merkezi konfigurasyon (tek dogruluk kaynagi).
 # Tum parametreler buradan gelir; hard-coded deger kullanilmaz.
 
-seed_list: [42, 123, 2026, 7, 999]
+seed_list: [42, 123, 2026]   # hesaplama suresi icin 3 seed (rapora not: tam run 5 seed gerektirir)
 
 fixed_params:        # zorunlu karsilastirma noktasi
   window_size: 4
@@ -55,7 +55,7 @@ datasets:
     drop_cols: [datetime, changepoint, source_group, source_file]
     cv:
       strategy: stratified_group_kfold
-      n_splits: 5
+      n_splits: 3   # hesaplama suresi icin 3 fold (rapora not)
       group_col: source_file
   batadal:
     file: BATADAL/BATADAL_dataset04.csv

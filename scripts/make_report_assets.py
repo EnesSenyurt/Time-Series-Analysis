@@ -140,7 +140,7 @@ def main(argv=None):
     from src.viz.plots import plot_confusion_matrix, plot_param_sensitivity, plot_roc_pr
 
     for ds in ["skab", "batadal"]:
-        print(f"\n[{ds.upper()}] figürler üretiliyor…")
+        print(f"\n[{ds.upper()}] figurler uretiliyor...")
         try:
             results = _quick_eval(cfg, ds, args.seed)
         except Exception as exc:
@@ -159,33 +159,33 @@ def main(argv=None):
                 y_true, y_pred, str(cm_path),
                 title=f"CM — {ds.upper()} / {model_name}",
             )
-            print(f"  ✓ {cm_path.name}")
+            print(f"  [OK] {cm_path.name}")
 
             roc_path = fig_dir / f"roc_pr_{ds}_{model_name}.png"
             plot_roc_pr(y_true, y_score, str(roc_path), label=f"{ds.upper()} / {model_name}")
-            print(f"  ✓ {roc_path.name}")
+            print(f"  [OK] {roc_path.name}")
 
         if "automaton" in results and "automaton_obj" in results["automaton"]:
             auto = results["automaton"]["automaton_obj"]
             diag_path = fig_dir / f"automaton_diagram_{ds}.png"
             plot_automaton(auto, str(diag_path))
-            print(f"  ✓ {diag_path.name}")
+            print(f"  [OK] {diag_path.name}")
 
             heat_path = fig_dir / f"transition_heatmap_{ds}.png"
             plot_transition_heatmap(auto, str(heat_path))
-            print(f"  ✓ {heat_path.name}")
+            print(f"  [OK] {heat_path.name}")
 
             mermaid_path = fig_dir / f"mermaid_{ds}.txt"
             mermaid_path.write_text(to_mermaid(auto), encoding="utf-8")
-            print(f"  ✓ {mermaid_path.name}")
+            print(f"  [OK] {mermaid_path.name}")
 
-    print("\n[SENSITIVITY] parametre duyarlilik grafiği üretiliyor…")
+    print("\n[SENSITIVITY] parametre duyarlilik grafigi uretiliyor...")
     runs_df = load_runs(cfg)
     sens_path = fig_dir / "param_sensitivity.png"
     plot_param_sensitivity(runs_df, str(sens_path))
-    print(f"  ✓ {sens_path.name}")
+    print(f"  [OK] {sens_path.name}")
 
-    print(f"\nTüm figürler kaydedildi: {fig_dir}")
+    print(f"\nTum figurler kaydedildi: {fig_dir}")
 
 
 if __name__ == "__main__":
