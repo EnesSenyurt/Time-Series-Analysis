@@ -16,9 +16,7 @@ env/
 *.pt
 *.joblib
 
-# Deney ciktilari (buyuk gorseller; kucuk metrik JSON/CSV commit edilebilir)
-results/figures/*.png
-results/figures/*.svg
+# Deney ciktilari
 results/logs/*.log
 
 # Isletim sistemi / IDE
