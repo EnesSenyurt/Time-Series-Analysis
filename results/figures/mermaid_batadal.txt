@@ -1,0 +1,16 @@
+stateDiagram-v2
+    ccab --> cabb: 1.00
+    cabb --> abbb: 1.00
+    bbca --> bcaa: 1.00
+    babc --> abcc: 1.00
+    cbca --> bcaa: 1.00
+    ccca --> ccaa: 1.00
+    ccaa --> caaa: 1.00
+    acba --> cbab: 1.00
+    acaa --> caaa: 1.00
+    acab --> caba: 1.00
+    caba --> abaa: 1.00
+    caab --> aabb: 1.00
+    accb --> ccbc: 1.00
+    abca --> bcab: 1.00
+    bcab --> cabb: 1.00
