@@ -48,6 +48,117 @@ Time-Series-Analysis/
 
 ---
 
+## Mimari ve Veri Akışı
+
+Sistem, **merkezi `config.yaml`** tarafından sürülen, modüler ve sızıntıya karşı güvenli bir pipeline olarak tasarlanmıştır. Her bileşen tek sorumluluk taşır; parametre değişikliği tüm akışı otomatik olarak yeniden üretir.
+
+### Veri Akışı ve Model Entegrasyonu
+
+Ham veriden akademik rapora kadar uçtan uca işlem hattı. İki model ailesi (DL ve otomata) aynı bölme ve ön işleme katmanından beslenir, böylece karşılaştırma adildir.
+
+```mermaid
+flowchart TD
+    CFG["config.yaml<br/>(tüm parametreler · tek kaynak)"]
+
+    RAW["Ham Veri<br/>SKAB valve1/2 · BATADAL ds04"]
+    LOAD["data_loader.py<br/>concat + source_group / source_file"]
+    SPLIT["splits.py<br/>SKAB: StratifiedGroupKFold<br/>BATADAL: zaman sıralı 60/20/20"]
+    PRE["preprocess.py<br/>Median Impute → StandardScaler → PCA<br/>(yalnız TRAIN'de fit)"]
+
+    RAW --> LOAD --> SPLIT --> PRE
+    PRE -->|"çok değişkenli pencereler"| DLIN["DL girdisi"]
+    PRE -->|"PC1 (tek boyut)"| AUIN["Otomata girdisi"]
+
+    DLIN --> DL["dl_models.py<br/>LSTM · 1D-CNN<br/>epoch=50 · ES patience=5"]
+    AUIN --> AU1["PAA → SAX → sliding window"]
+    AU1 --> AU2["automaton.py<br/>durumlar + geçiş olasılıkları<br/>Laplace smoothing"]
+    AU2 --> AU3["levenshtein.py<br/>unseen → en yakın durum"]
+
+    DL --> EVAL["metrics.py<br/>Accuracy / Precision / Recall / F1"]
+    AU3 --> EVAL
+    AU2 --> EXP["explainer.py<br/>state · pattern · transition<br/>path-prob → JSON"]
+
+    EVAL --> STAT["stats_tests.py<br/>Wilcoxon · McNemar"]
+    EVAL --> VIZ["plots.py<br/>CM · ROC/PR · heatmap · diyagram"]
+    EXP --> VIZ
+    STAT --> REP["README.md<br/>Akademik Rapor"]
+    VIZ --> REP
+
+    CFG -.->|parametreler| LOAD
+    CFG -.-> SPLIT
+    CFG -.-> PRE
+    CFG -.-> DL
+    CFG -.-> AU1
+    CFG -.-> AU2
+    CFG -.-> EVAL
+```
+
+### Modüler Pipeline Mimarisi
+
+`src/` altındaki paketlerin sorumluluk ayrımı ve bağımlılıkları. `experiments/runner.py` tüm katmanları orkestre eder; `config.py` parametreleri her katmana enjekte eder.
+
+```mermaid
+flowchart LR
+    subgraph CONFIG["Konfigürasyon Katmanı"]
+        C1["config.yaml"] --> C2["config.py"]
+    end
+
+    subgraph DATA["src/data"]
+        D1["data_loader.py"]
+        D2["splits.py"]
+        D3["preprocess.py"]
+    end
+
+    subgraph AUTO["src/automata"]
+        A1["paa.py"]
+        A2["sax.py"]
+        A3["patterns.py"]
+        A4["levenshtein.py"]
+        A5["automaton.py"]
+    end
+
+    subgraph MODELS["src/models"]
+        M1["dl_models.py<br/>LSTM · 1D-CNN"]
+    end
+
+    subgraph EXPLAIN["src/explain"]
+        E1["explainer.py"]
+    end
+
+    subgraph EXPERIMENTS["src/experiments"]
+        X1["scenarios.py"]
+        X2["metrics.py"]
+        X3["stats_tests.py"]
+        X4["logging_utils.py"]
+        X5["runner.py"]
+    end
+
+    subgraph VIZ["src/viz"]
+        V1["plots.py"]
+        V2["automata_plots.py"]
+    end
+
+    CONFIG -.->|parametreler| DATA
+    CONFIG -.-> AUTO
+    CONFIG -.-> MODELS
+    CONFIG -.-> EXPERIMENTS
+    DATA --> AUTO
+    DATA --> MODELS
+    AUTO --> EXPLAIN
+    AUTO --> EXPERIMENTS
+    MODELS --> EXPERIMENTS
+    EXPERIMENTS --> VIZ
+    EXPLAIN --> VIZ
+    X5 -.->|orkestrasyon| DATA
+    X5 -.-> AUTO
+    X5 -.-> MODELS
+    X5 -.-> VIZ
+```
+
+Üç senaryo (`original`, `noise`, `unseen`) ve iki aşamalı parametre deneyi (sabit: window=4 / alphabet=3; varyasyon: window∈{3,4,5,6} × alphabet∈{3,4,5,6}) bu akış üzerinden tamamen config ile sürülür.
+
+---
+
 ## İçindekiler
 
 1. [Giriş ve Motivasyon](#1-giriş-ve-motivasyon)
