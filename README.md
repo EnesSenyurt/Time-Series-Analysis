@@ -481,27 +481,52 @@ Tüm figürler `python scripts/make_report_assets.py` ile `results/figures/` alt
 
 ### 7.1 Karışıklık Matrisleri
 
-| ![SKAB LSTM CM](results/figures/confusion_matrix_skab_lstm.png) | ![BATADAL CNN CM](results/figures/confusion_matrix_batadal_cnn1d.png) |
-|---|---|
-| SKAB — LSTM | BATADAL — 1D-CNN |
+**SKAB — LSTM**
+
+![SKAB LSTM CM](results/figures/confusion_matrix_skab_lstm.png)
+
+**BATADAL — 1D-CNN**
+
+![BATADAL CNN CM](results/figures/confusion_matrix_batadal_cnn1d.png)
 
 ### 7.2 ROC ve Precision-Recall Eğrileri
 
-| ![SKAB ROC](results/figures/roc_pr_skab_lstm.png) | ![BATADAL ROC](results/figures/roc_pr_batadal_automaton.png) |
-|---|---|
-| SKAB — LSTM | BATADAL — Otomata |
+**SKAB — LSTM**
+
+![SKAB ROC](results/figures/roc_pr_skab_lstm.png)
+
+**BATADAL — Otomata**
+
+![BATADAL ROC](results/figures/roc_pr_batadal_automaton.png)
 
 ### 7.3 Otomata Durum Diyagramı
 
 ```mermaid
 stateDiagram-v2
-    %% Mermaid diyagramı make_report_assets.py çalıştırıldıktan sonra
-    %% results/figures/mermaid_skab.txt dosyasından buraya kopyalanacak
+    abac --> bacb: 1.00
+    ccca --> ccaa: 1.00
+    cacc --> accb: 1.00
+    acab --> cabb: 1.00
+    ccac --> cacb: 1.00
+    caba --> abab: 1.00
+    cbac --> bacb: 1.00
+    caac --> aacb: 1.00
+    ccba --> cbab: 1.00
+    bacc --> accc: 1.00
+    cccc --> cccc: 0.97
+    aaaa --> aaaa: 0.90
+    cccb --> ccbc: 0.88
+    bbac --> bacb: 0.86
+    abcc --> bccb: 0.83
 ```
 
-| ![SKAB Otomata](results/figures/automaton_diagram_skab.png) | ![BATADAL Heatmap](results/figures/transition_heatmap_batadal.png) |
-|---|---|
-| SKAB — Durum Diyagramı | BATADAL — Geçiş Isı Haritası |
+**SKAB — Durum Diyagramı**
+
+![SKAB Otomata](results/figures/automaton_diagram_skab.png)
+
+**BATADAL — Geçiş Isı Haritası**
+
+![BATADAL Heatmap](results/figures/transition_heatmap_batadal.png)
 
 ### 7.4 Parametre Duyarlılık Grafikleri
 
